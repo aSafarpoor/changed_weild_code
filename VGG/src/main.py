@@ -11,8 +11,9 @@ import toolkits
 # ===========================================
 #        Parse the argument
 # ===========================================
-import argparse
+import argparse#Parser for command-line options, arguments and sub-commands. 
 parser = argparse.ArgumentParser()
+#in terminal you can use his flags
 # set up training configuration.
 parser.add_argument('--gpu', default='', type=str)
 parser.add_argument('--resume', default='', type=str)
@@ -33,6 +34,7 @@ parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'
 parser.add_argument('--optimizer', default='adam', choices=['adam', 'sgd'], type=str)
 parser.add_argument('--ohem_level', default=0, type=int,
                     help='pick hard samples from (ohem_level * batch_size) proposals, must be > 1')
+#ohem is an algorithm for training region-based ConvNet object
 global args
 args = parser.parse_args()
 
@@ -65,11 +67,14 @@ def main():
               }
 
     # Datasets
+    #The Flatten layer is a utility layer that flattens an input of shape n * c * h * w to a simple vector output of shape n * (c*h*w)
     partition = {'train': trnlist.flatten(), 'val': vallist.flatten()}
     labels = {'train': trnlb.flatten(), 'val': vallb.flatten()}
 
     # Generators
+    #make data
     trn_gen = generator.DataGenerator(partition['train'], labels['train'], **params)
+    # create model depend on args
     network = model.vggvox_resnet2d_icassp(input_dim=params['dim'],
                                            num_class=params['n_classes'],
                                            mode='train', args=args)
@@ -93,6 +98,11 @@ def main():
     normal_lr = keras.callbacks.LearningRateScheduler(step_decay)
     tbcallbacks = keras.callbacks.TensorBoard(log_dir=log_path, histogram_freq=0, write_graph=True, write_images=False,
                                               update_freq=args.batch_size * 16)
+    '''
+    Keras callbacks return information from a training algorithm while training is taking place. ... 
+    A callback is a set of functions to be applied at given stages of the training procedure. 
+    You can use callbacks to get a view on internal states and statistics of the model during trainin
+    '''
     callbacks = [keras.callbacks.ModelCheckpoint(os.path.join(model_path, 'weights-{epoch:02d}-{acc:.3f}.h5'),
                                                  monitor='loss',
                                                  mode='min',
