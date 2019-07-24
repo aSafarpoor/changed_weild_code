@@ -1,0 +1,8 @@
+import numpy
+a=numpy.load("groundtruth_labels.npy")
+print("\n")
+print(a)
+print("\n")
+a=numpy.load("prediction_scores.npy")
+print(a)
+print("\n")

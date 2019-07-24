@@ -75,7 +75,11 @@ class DataGenerator(keras.utils.Sequence):
                                          n_fft=self.nfft, spec_len=self.spec_len)
             # Store class
             y[i] = self.labels[indexes[i]]
-
+        print("\n\n")
+        print(X)
+        print("\n\n")
+        print(keras.utils.to_categorical(y, num_classes=self.n_classes))
+        print("\n\n")
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
 '''
 # online hard example mining (OHEM) algorithm for training region-based ConvNet detectors. 

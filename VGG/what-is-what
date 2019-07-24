@@ -1,0 +1,13 @@
+*NFFT=?
+N-point FFT 
+*FFT=?
+fast-Fourier-Transform
+###it is an algorithm help with faster and better computation 
+
+
+
+python predict.py --gpu 10 --net resnet34s --ghost_cluster 2 --vlad_cluster 8 --loss softmax --resume ../model/gvlad_softmax/resnet34_vlad8_ghost2_bdim512_deploy/weights.h5 
+
+
+
+python main.py --net resnet34s --batch_size 160 --gpu 2,3 --lr 0.001 --warmup_ratio 0.1 --optimizer adam --epochs 128 --multiprocess 8 --loss softmax 
