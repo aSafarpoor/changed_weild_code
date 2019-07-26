@@ -57,7 +57,7 @@ def main():
     list2 = np.array([os.path.join(args.data_path, i[2]) for i in verify_list])
     
     total_list = np.concatenate((list1, list2))
-    
+    print(total_list)
     #Returns the sorted unique elements of an array
     unique_list = np.unique(total_list)
 

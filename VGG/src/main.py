@@ -18,8 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', default='', type=str)
 parser.add_argument('--resume', default='', type=str)
 parser.add_argument('--batch_size', default=64, type=int)
-# parser.add_argument('--data_path', default='/scratch/local/ssd/weidi/voxceleb2/dev/wav', type=str)
-parser.add_argument('--data_path', default='media/weidi/traindata', type=str)
+parser.add_argument('--data_path', default='/scratch/local/ssd/weidi/voxceleb2/dev/wav', type=str)
 parser.add_argument('--multiprocess', default=12, type=int)
 # set up network configuration.
 parser.add_argument('--net', default='resnet34s', choices=['resnet34s', 'resnet34l'], type=str)
@@ -52,9 +51,6 @@ def main():
     # ==================================
     trnlist, trnlb = toolkits.get_voxceleb2_datalist(args, path='../meta/voxlb2_train.txt')
     vallist, vallb = toolkits.get_voxceleb2_datalist(args, path='../meta/voxlb2_val.txt')
-    # print(trnlb,vallb)
-    # print(trnlist,vallist)
-    #example:   media/weidi/traindata/id09272/fJIH2xh8HEs/00009.wav   
 
     # construct the data generator.
     params = {'dim': (257, 250, 1),
@@ -74,15 +70,10 @@ def main():
     #The Flatten layer is a utility layer that flattens an input of shape n * c * h * w to a simple vector output of shape n * (c*h*w)
     partition = {'train': trnlist.flatten(), 'val': vallist.flatten()}
     labels = {'train': trnlb.flatten(), 'val': vallb.flatten()}
-    
+
     # Generators
     #make data
     trn_gen = generator.DataGenerator(partition['train'], labels['train'], **params)
-    '''
-    print("\n\n",trn_gen.list_IDs)
-    ['media/weidi/traindata/traindata/salavat.mp3'
-    'media/weidi/traindata/traindata/salavat.mp3']
-    '''
     # create model depend on args
     network = model.vggvox_resnet2d_icassp(input_dim=params['dim'],
                                            num_class=params['n_classes'],
