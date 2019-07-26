@@ -118,7 +118,7 @@ def main():
         if c % 50 == 0: print('Finish extracting features for {}/{}th wav.'.format(c, total_length))
         specs = ut.load_data(ID, win_length=params['win_length'], sr=params['sampling_rate'],
                              hop_length=params['hop_length'], n_fft=params['nfft'],
-                             spec_len=params['spec_len'], mode='eval')
+                             spec_len=params['spec_len'], mode='eval')#it start from here
         specs = np.expand_dims(np.expand_dims(specs, 0), -1)
         
         v = network_eval.predict(specs)
