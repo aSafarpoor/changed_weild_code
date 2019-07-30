@@ -34,7 +34,7 @@ def identity_block_2D(input_tensor, kernel_size, filters, stage, block, trainabl
                name=conv_name_1)(input_tensor)
     x = BatchNormalization(axis=bn_axis, trainable=trainable, name=bn_name_1)(x)
     x = Activation('relu')(x)
-
+    '''
     conv_name_2 = 'conv' + str(stage) + '_' + str(block) + '_3x3'
     bn_name_2 = 'conv' + str(stage) + '_' + str(block) + '_3x3/bn'
     x = Conv2D(filters2, kernel_size,
@@ -58,7 +58,7 @@ def identity_block_2D(input_tensor, kernel_size, filters, stage, block, trainabl
     x = BatchNormalization(axis=bn_axis, trainable=trainable, name=bn_name_3)(x)
 
     x = layers.add([x, input_tensor])
-    x = Activation('relu')(x)
+    x = Activation('relu')(x)'''
     return x
 
 
@@ -89,7 +89,7 @@ def conv_block_2D(input_tensor, kernel_size, filters, stage, block, strides=(2, 
                name=conv_name_1)(input_tensor)
     x = BatchNormalization(axis=bn_axis, trainable=trainable, name=bn_name_1)(x)
     x = Activation('relu')(x)
-
+    '''
     conv_name_2 = 'conv' + str(stage) + '_' + str(block) + '_3x3'
     bn_name_2 = 'conv' + str(stage) + '_' + str(block) + '_3x3/bn'
     x = Conv2D(filters2, kernel_size, padding='same',
@@ -122,7 +122,7 @@ def conv_block_2D(input_tensor, kernel_size, filters, stage, block, strides=(2, 
     shortcut = BatchNormalization(axis=bn_axis, trainable=trainable, name=bn_name_4)(shortcut)
 
     x = layers.add([x, shortcut])
-    x = Activation('relu')(x)
+    x = Activation('relu')(x)'''
     return x
 
 
@@ -145,7 +145,7 @@ def resnet_2D_v1(input_dim, mode='train'):
     x1 = BatchNormalization(axis=bn_axis, name='conv1_1/3x3_s1/bn', trainable=True)(x1)
     x1 = Activation('relu')(x1)
     x1 = MaxPooling2D((2, 2), strides=(2, 2))(x1)
-
+    '''
     # ===============================================
     #            Convolution Section 2
     # ===============================================
@@ -170,7 +170,8 @@ def resnet_2D_v1(input_dim, mode='train'):
     x5 = conv_block_2D(x4, 3, [256, 256, 512], stage=5, block='a', trainable=True)
     x5 = identity_block_2D(x5, 3, [256, 256, 512], stage=5, block='b', trainable=True)
     x5 = identity_block_2D(x5, 3, [256, 256, 512], stage=5, block='c', trainable=True)
-    y = MaxPooling2D((3, 1), strides=(2, 1), name='mpool2')(x5)
+    '''
+    y = MaxPooling2D((3, 1), strides=(2, 1), name='mpool2')(x1)
     return inputs, y
 
 
@@ -193,7 +194,7 @@ def resnet_2D_v2(input_dim, mode='train'):
     x1 = BatchNormalization(axis=bn_axis, name='conv1_1/3x3_s1/bn', trainable=True)(x1)
     x1 = Activation('relu')(x1)
     x1 = MaxPooling2D((2, 2), strides=(2, 2))(x1)
-
+    '''
     # ===============================================
     #            Convolution Section 2
     # ===============================================
@@ -218,7 +219,8 @@ def resnet_2D_v2(input_dim, mode='train'):
     x5 = conv_block_2D(x4, 3, [512, 512, 2048], stage=5, block='a', trainable=True)
     x5 = identity_block_2D(x5, 3, [512, 512, 2048], stage=5, block='b', trainable=True)
     x5 = identity_block_2D(x5, 3, [512, 512, 2048], stage=5, block='c', trainable=True)
-    y = MaxPooling2D((3, 1), strides=(2, 1), name='mpool2')(x5)
+    '''
+    y = MaxPooling2D((3, 1), strides=(2, 1), name='mpool2')(x1)
     return inputs, y
 
 

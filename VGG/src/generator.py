@@ -3,8 +3,6 @@ import keras
 import numpy as np
 import utils as ut
 
-
-
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
     def __init__(self, list_IDs, labels, dim, mp_pooler, augmentation=True, batch_size=32, nfft=512, spec_len=250,
@@ -77,12 +75,8 @@ class DataGenerator(keras.utils.Sequence):
             y[i] = self.labels[indexes[i]]
 
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
-'''
-# online hard example mining (OHEM) algorithm for training region-based ConvNet detectors. 
-# Our motivation is the same as it has always been -- detection datasets contain an overwhelming number of easy examples 
-# and a small number of hard examples. Automatic selection of these hard examples can make training more effective and efficient. 
-# OHEM is a simple and intuitive algorithm that eliminates several heuristics and hyperparameters in common use
-'''
+
+
 def OHEM_generator(model, datagen, steps, propose_time, batch_size, dims, nclass):
     # propose_time : number of candidate batches.
     # prop : the number of hard batches for training.

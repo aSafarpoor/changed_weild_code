@@ -6,15 +6,8 @@ import numpy as np
 #       code from Arsha for loading data.
 # ===============================================
 def load_wav(vid_path, sr, mode='train'):
-    wav, sr_ret = librosa.load(vid_path, sr=sr)#it should change now
+    wav, sr_ret = librosa.load(vid_path, sr=sr)
     assert sr_ret == sr
-    # print("\n\n")
-    # print(wav,"\n\n")
-    # print(sr_ret,"\n\n")
-    # (array([-0.00835951, -0.01565228, -0.0142962 , ...,  0.00141411,
-    #     0.00095336,  0.        ], dtype=float32), '\n\n')
-    # (16000, '\n\n')
-
     if mode == 'train':
         extended_wav = np.append(wav, wav)
         if np.random.random() < 0.3:

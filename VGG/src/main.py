@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', default='', type=str)
 parser.add_argument('--resume', default='', type=str)
 parser.add_argument('--batch_size', default=64, type=int)
-parser.add_argument('--data_path', default='/scratch/local/ssd/weidi/voxceleb2/dev/wav', type=str)
+parser.add_argument('--data_path', default='media/weidi/2TB-2/datasets/voxceleb1/wav', type=str)
 parser.add_argument('--multiprocess', default=12, type=int)
 # set up network configuration.
 parser.add_argument('--net', default='resnet34s', choices=['resnet34s', 'resnet34l'], type=str)
@@ -69,6 +69,7 @@ def main():
     # Datasets
     #The Flatten layer is a utility layer that flattens an input of shape n * c * h * w to a simple vector output of shape n * (c*h*w)
     partition = {'train': trnlist.flatten(), 'val': vallist.flatten()}
+    # print("partition is: ",partition)
     labels = {'train': trnlb.flatten(), 'val': vallb.flatten()}
 
     # Generators
@@ -96,20 +97,21 @@ def main():
 
     model_path, log_path = set_path(args)
     normal_lr = keras.callbacks.LearningRateScheduler(step_decay)
-    tbcallbacks = keras.callbacks.TensorBoard(log_dir=log_path, histogram_freq=0, write_graph=True, write_images=False,
-                                              update_freq=args.batch_size * 16)
+    # tbcallbacks = keras.callbacks.TensorBoard(log_dir=log_path, histogram_freq=0, write_graph=True, write_images=False,
+                                            #   update_freq=args.batch_size * 16)
     '''
     Keras callbacks return information from a training algorithm while training is taking place. ... 
     A callback is a set of functions to be applied at given stages of the training procedure. 
     You can use callbacks to get a view on internal states and statistics of the model during trainin
     '''
-    callbacks = [keras.callbacks.ModelCheckpoint(os.path.join(model_path, 'weights-{epoch:02d}-{acc:.3f}.h5'),
-                                                 monitor='loss',
-                                                 mode='min',
-                                                 save_best_only=True),
-                 normal_lr, tbcallbacks]
+    # callbacks = [keras.callbacks.ModelCheckpoint(os.path.join(model_path, 'weights-{epoch:02d}-{acc:.3f}.h5'),
+    #                                              monitor='loss',
+    #                                              mode='min',
+    #                                              save_best_only=True),
+    #              normal_lr, tbcallbacks]
 
     if args.ohem_level > 1:     # online hard negative mining will be used
+
         candidate_steps = int(len(partition['train']) // args.batch_size)
         iters_per_epoch = int(len(partition['train']) // (args.ohem_level*args.batch_size))
 
@@ -136,15 +138,20 @@ def main():
                               verbose=1)
 
     else:
+        print("steps_per_epoch=",int(len(partition['train'])),"   ",args.batch_size)
+        print(trn_gen)
+        print(network)
+        print( "epochs=",args.epochs,"--------")
+        print("***************",args.batch_size)
         network.fit_generator(trn_gen,
-                              steps_per_epoch=int(len(partition['train'])//args.batch_size),
+                              steps_per_epoch=2,#int(len(partition['train'])//args.batch_size),
                               epochs=args.epochs,
-                              max_queue_size=10,
-                              callbacks=callbacks,
-                              use_multiprocessing=False,
+                              max_queue_size=2,
+                            #   callbacks=callbacks,
+                              use_multiprocessing=True,
                               workers=1,
-                              verbose=1)
-
+                              verbose=1)#should change to one? 
+        print("end!")
 
 def step_decay(epoch):
     '''

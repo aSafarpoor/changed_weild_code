@@ -51,27 +51,18 @@ def main():
         verify_list = np.loadtxt('../meta/voxceleb1_veri_test_extended.txt', str)
     else:
         raise IOError('==> unknown test type.')
-    #here is what we changed before in mete/test-files
+
     verify_lb = np.array([int(i[0]) for i in verify_list])
     list1 = np.array([os.path.join(args.data_path, i[1]) for i in verify_list])
     list2 = np.array([os.path.join(args.data_path, i[2]) for i in verify_list])
-    
+
     total_list = np.concatenate((list1, list2))
-    print(total_list)
-    #Returns the sorted unique elements of an array
     unique_list = np.unique(total_list)
 
     # ==================================
     #       Get Model
     # ==================================
     # construct the data generator.
-    '''
-    *NFFT=?
-    N-point FFT 
-    *FFT=?
-    fast-Fourier-Transform
-    ###it is an algorithm help with faster and better computation 
-    '''
     params = {'dim': (257, None, 1),
               'nfft': 512,
               'spec_len': 250,
@@ -81,13 +72,12 @@ def main():
               'sampling_rate': 16000,
               'normalize': True,
               }
-    #at the end model.vggvox_resnet2d_icassp will return a model based on what we choosed
+
     network_eval = model.vggvox_resnet2d_icassp(input_dim=params['dim'],
                                                 num_class=params['n_classes'],
                                                 mode='eval', args=args)
 
     # ==> load pre-trained model ???
-    #args.resume is: ../model/gvlad_softmax/resnet34_vlad8_ghost2_bdim512_deploy/weights.h5
     if args.resume:
         # ==> get real_model from arguments input,
         # load the model if the imag_model == real_model.
@@ -105,22 +95,14 @@ def main():
     # The feature extraction process has to be done sample-by-sample,
     # because each sample is of different lengths.
     total_length = len(unique_list)
-    '''
-    uniq list ['media/weidi/2TB-2/datasets/voxceleb1/wav/id10001/Y8hIVOBuels/salavat.mp3']
-    Finish extracting features for 0/1th wav.
-    spec  [[[[12.993574  ]
-            [12.735595  ]
-            [13.187243  ]
-            ...
-    '''
     feats, scores, labels = [], [], []
     for c, ID in enumerate(unique_list):
         if c % 50 == 0: print('Finish extracting features for {}/{}th wav.'.format(c, total_length))
         specs = ut.load_data(ID, win_length=params['win_length'], sr=params['sampling_rate'],
                              hop_length=params['hop_length'], n_fft=params['nfft'],
-                             spec_len=params['spec_len'], mode='eval')#it start from here
+                             spec_len=params['spec_len'], mode='eval')
         specs = np.expand_dims(np.expand_dims(specs, 0), -1)
-        
+    
         v = network_eval.predict(specs)
         feats += [v]
     
@@ -140,14 +122,11 @@ def main():
 
     scores = np.array(scores)
     labels = np.array(labels)
-    print(scores)
-    print(labels)
 
     np.save(os.path.join(result_path, 'prediction_scores.npy'), scores)
     np.save(os.path.join(result_path, 'groundtruth_labels.npy'), labels)
 
     eer, thresh = toolkits.calculate_eer(labels, scores)
-    print("eer: ",eer,"  ,   thresh: ",thresh)
     print('==> model : {}, EER: {}'.format(args.resume, eer))
 
 
